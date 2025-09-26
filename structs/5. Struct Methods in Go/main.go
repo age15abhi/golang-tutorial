@@ -32,7 +32,41 @@ func (u User) greet() {
 	fmt.Println("Hello ", u.name)
 }
 
-// 📌 Example 2: Value Receiver vs Pointer Receiver
+/* ====================================================
+  📌 Example 2: Value Receiver vs Pointer Receiver
+➡️ Use value receiver when method doesn’t modify struct.
+➡️ Use pointer receiver when method should update struct or avoid copying large structs.
+====================================================== */
+
+// 1. Value Receiver (copy)
+func (u User) changeNameOnlyCopy(newName string) {
+	u.name = newName // only change the copy
+}
+
+// 2. Pointer Receiver (reference)
+func (u *User) changeNameOriginal(newName string) {
+	u.name = newName // modifies original
+}
+
+/* ====================================================
+  📌 Example 3: Methods on Embedded Structs
+====================================================== */
+
+type Engine struct {
+	horsepower int
+}
+
+// now can i call the function with car method
+func (e Engine) info() {
+	fmt.Println("HorsePower ==> ", e.horsepower)
+}
+
+type Car struct {
+	brand string
+	Engine
+}
+
+// ---------------- MAIN FUNCTION -----------------------
 
 func main() {
 	// create the struct
@@ -42,4 +76,18 @@ func main() {
 
 	greet(user)  // calling normal function
 	user.greet() // calling method of struct
+
+	user.changeNameOnlyCopy("john")
+	fmt.Println(user.name) // still "Abhi"
+
+	user.changeNameOriginal("john")
+	fmt.Println(user.name) // // now "John"
+
+	car := Car{
+		brand:  "Tesla",
+		Engine: Engine{horsepower: 500},
+	}
+
+	// run the info function
+	car.info()
 }
